@@ -1,0 +1,63 @@
+:root {
+    --bg-primary: #f4f0e9;
+    --bg-secondary: #ffffff;
+    --bg-card: #ffffff;
+
+    --text-primary: #25243d;
+    --text-secondary: #77758a;
+
+    --accent: #25243d;
+    --accent-hover: #353451;
+
+    --border: #ddd9d1;
+
+    --input-bg: #f8f6f2;
+
+    --shadow: 0 15px 40px rgba(37, 36, 61, 0.08);
+
+    --radius-lg: 28px;
+    --radius-md: 18px;
+    --radius-sm: 12px;
+}
+
+[data-theme="dark"] {
+    --bg-primary: #17182d;
+    --bg-secondary: #20213b;
+    --bg-card: #252642;
+
+    --text-primary: #f6f5f2;
+    --text-secondary: #aaaabd;
+
+    --accent: #f4f0e9;
+    --accent-hover: #ffffff;
+
+    --border: #373852;
+
+    --input-bg: #2c2d49;
+
+    --shadow: 0 15px 40px rgba(0, 0, 0, 0.25);
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    /* overflow: hidden; */
+    font-family: "Inter", Arial, sans-serif;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    transition: background 0.3s ease, color 0.3s ease;
+}
+
+button,
+input {
+    font-family: inherit;
+}
+
+button {
+    cursor: pointer;
+}
