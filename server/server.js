@@ -6,6 +6,8 @@ const db = require("./config/db");
 const authRoutes = require("./routes/authRoutes");
 const tripRoutes = require("./routes/tripRoutes");
 const membershipRoutes = require("./routes/membershipRoutes");
+
+
 const app = express();
 
 app.use(cors());

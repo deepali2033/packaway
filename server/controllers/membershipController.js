@@ -4,7 +4,7 @@ const db = require("../config/db");
 
 const joinTrip = async (req, res) => {
     try {
-        const { trip_id } = req.body;
+        const { trip_id } = req.params;
         const user_id = req.user.id;
 
         if (!trip_id) {
@@ -101,7 +101,7 @@ const trip = async (req, res) => {
 
 const leaveTrips = async (req, res) => {
     try {
-        const { trip_id } = req.body;
+        const { trip_id } = req.params;
         const user_id = req.user.id;
 
         if (!trip_id) {
@@ -188,5 +188,6 @@ module.exports = {
     joinTrip,
     leaveTrips,
     trip,
-    getTripDetails
+    getTripDetails,
+  
 };

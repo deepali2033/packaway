@@ -1,10 +1,12 @@
 
-import { useState } from "react";
+import {  useEffect,useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 import Sidebar from "../components/layout/Sidebar";
 import Header from "../components/layout/Header";
 
+import { getTripById } from "../services/tripService";
+import { joinTrip, leaveTrip , getTripMembership} from "../services/membershipService";
 import defaultTripImage from "../assets/images/defualt-img.jpg";
 import "../assets/styles/dashboard.css";
 
@@ -13,20 +15,40 @@ function TripDetails() {
   const { id } = useParams();
 
   const [showEditTrip, setShowEditTrip] = useState(false);
+const [isJoined, setIsJoined] = useState(false);
+const [membershipLoading, setMembershipLoading] = useState(false);
 
-  const [trip, setTrip] = useState({
-    id,
-    title: "Goa Beach Vacation",
-    destination: "Goa, India",
-    start_date: "2026-09-10",
-    end_date: "2026-09-15",
-    budget: 25000,
-    status: "planned",
-    description:
-      "Enjoy a relaxing vacation in Goa with beaches, cafes, water sports and sunset views. This trip is planned for 5 days with friends.",
-    cover_image: defaultTripImage,
-  });
 
+  const [trip, setTrip] = useState(null);
+const [loading, setLoading] = useState(true);
+useEffect(() => {
+  const fetchTrip = async () => {
+    try {
+      setLoading(true);
+
+      const response = await getTripById(id);
+
+      console.log("Trip Details Response:", response);
+
+      if (response.success) {
+        setTrip(response.trip);
+      } else {
+        alert(response.message || "Trip not found");
+      }
+    } catch (error) {
+      console.error("Fetch Trip Error:", error);
+      alert(
+        error.response?.data?.message || "Failed to fetch trip details"
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (id) {
+    fetchTrip();
+  }
+}, [id]);
   const [tripForm, setTripForm] = useState({
     title: "",
     destination: "",
@@ -44,7 +66,25 @@ function TripDetails() {
     localStorage.removeItem("token");
     window.location.href = "/login";
   };
+const handleJoinTrip = async () => {
+  try {
+    setMembershipLoading(true);
 
+    const response = await joinTrip(id);
+
+    if (response.success) {
+      setIsJoined(true);
+      alert("Trip joined successfully");
+    } else {
+      alert(response.message || "Failed to join trip");
+    }
+  } catch (error) {
+    console.error("Join Trip Error:", error);
+    alert("Failed to join trip");
+  } finally {
+    setMembershipLoading(false);
+  }
+};
   const handleOpenEdit = () => {
     setTripForm({
       title: trip.title,
@@ -59,6 +99,25 @@ function TripDetails() {
 
     setShowEditTrip(true);
   };
+  const handleLeaveTrip = async () => {
+  try {
+    setMembershipLoading(true);
+
+    const response = await leaveTrip(id);
+
+    if (response.success) {
+      setIsJoined(false);
+      alert("You left the trip successfully");
+    } else {
+      alert(response.message || "Failed to leave trip");
+    }
+  } catch (error) {
+    console.error("Leave Trip Error:", error);
+    alert("Failed to leave trip");
+  } finally {
+    setMembershipLoading(false);
+  }
+};
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -87,8 +146,15 @@ function TripDetails() {
       alert("Failed to update trip");
     }
   };
+if (loading) {
+  return <div>Loading trip details...</div>;
+}
 
+if (!trip) {
+  return <div>Trip not found.</div>;
+}
   return (
+
     <div className="dashboard-page">
       <Sidebar
         userName={userName}
@@ -159,20 +225,38 @@ function TripDetails() {
               </div>
             </div>
 
-            <div className="action-card">
-              <h3>Trip Actions</h3>
+           <div className="action-card">
+  <h3>Trip Actions</h3>
 
-              <button
-                className="create-trip-button"
-                onClick={handleOpenEdit}
-              >
-                ✏️ Edit Trip
-              </button>
+  <button
+    className="create-trip-button"
+    onClick={handleOpenEdit}
+  >
+    ✏️ Edit Trip
+  </button>
 
-              <button className="archive-btn">
-                📦 Archive Trip
-              </button>
-            </div>
+  {!isJoined ? (
+    <button
+      className="create-trip-button"
+      onClick={handleJoinTrip}
+      disabled={membershipLoading}
+    >
+      {membershipLoading ? "Joining..." : "🤝 Join Trip"}
+    </button>
+  ) : (
+    <button
+      className="archive-btn"
+      onClick={handleLeaveTrip}
+      disabled={membershipLoading}
+    >
+      {membershipLoading ? "Leaving..." : "🚪 Leave Trip"}
+    </button>
+  )}
+
+  <button className="archive-btn">
+    📦 Archive Trip
+  </button>
+</div>
 
           </div>
 

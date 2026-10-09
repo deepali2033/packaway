@@ -13,8 +13,8 @@ const {
 
 
 
-router.post("/join", authMiddleware, joinTrip);
+router.post("/join/:trip_id", authMiddleware, joinTrip);
 router.get("/trip", authMiddleware, trip);
-router.delete("/leave", authMiddleware, leaveTrips);
+router.delete("/leave/:trip_id", authMiddleware, leaveTrips);
 router.get("/details", authMiddleware, getTripDetails);
 module.exports = router;

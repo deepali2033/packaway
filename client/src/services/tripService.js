@@ -49,3 +49,17 @@ export const getTripById = async (id) => {
 
     return response.data;
 };
+export const getAllTrips = async () => {
+    const token = localStorage.getItem("token");
+
+    const response = await axios.get(
+        "http://localhost:5000/api/trips/all",
+        {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        }
+    );
+
+    return response.data;
+};

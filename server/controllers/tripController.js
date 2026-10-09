@@ -98,7 +98,29 @@ const getMyTrips = async (req, res)=>{
         });
     }
 }
-module.exports = {
+const getAllTrips = async (req, res) => {
+    try {
+        const [trips] = await db.query(
+            `SELECT *
+             FROM trips
+             ORDER BY created_at DESC`
+        );
+
+        return res.status(200).json({
+            success: true,
+            trips
+        });
+
+    } catch (error) {
+        console.error("Get All Trips Error:", error);
+
+        return res.status(500).json({
+            success: false,
+            message: "Server error"
+        });
+    }
+};module.exports = {
     createTrip,
-    getMyTrips
+    getMyTrips,
+    getAllTrips
 };

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { getProfile } from "../services/authService";
 import { getMyTrips } from "../services/tripService";
+import { getAllTrips } from "../services/tripService";
 import { createTrip } from "../services/tripService";
 import defaultTripImage from "../assets/images/defualt-img.jpg"
 import "../assets/styles/dashboard.css";
@@ -77,7 +78,7 @@ loadTrips();
     }, []);
 const loadTrips = async () => {
     try {
-        const data = await getMyTrips();
+        const data = await getAllTrips();
 
         console.log("Trips:", data);
 
