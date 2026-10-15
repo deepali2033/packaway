@@ -73,23 +73,29 @@ const trip = async (req, res) => {
         }
 
         const [members] = await db.query(
-            `SELECT memberships.id,
-                    memberships.trip_id,
-                    memberships.user_id,
-                    memberships.role,
-                    memberships.joined_at
-             FROM memberships
-             WHERE memberships.trip_id = ?`,
+            `SELECT
+                m.id,
+                m.trip_id,
+                m.user_id,
+                m.role,
+                m.joined_at,
+                u.name AS user_name,
+                u.email AS user_email
+             FROM memberships m
+             LEFT JOIN users u ON u.id = m.user_id
+             WHERE m.trip_id = ?`,
             [trip_id]
         );
 
+
+console.log("Sending members:", members);
         return res.status(200).json({
             success: true,
-            members: members
+            members
         });
 
     } catch (error) {
-        console.error(error);
+        console.error("Trip Members Error:", error);
 
         return res.status(500).json({
             success: false,
@@ -97,8 +103,6 @@ const trip = async (req, res) => {
         });
     }
 };
-
-
 const leaveTrips = async (req, res) => {
     try {
         const { trip_id } = req.params;

@@ -52,7 +52,7 @@ const createTrip = async (req, res) => {
 
         await db.query(
             `INSERT INTO memberships
-            (trip_id, user_id, role, joined_at)
+            ( user_id, role, joined_at)
             VALUES (?, ?, ?, NOW())`,
             [tripId, userId, "owner"]
         );
@@ -98,6 +98,44 @@ const getMyTrips = async (req, res)=>{
         });
     }
 }
+
+const getTripById = async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        if (!/^[1-9]\d*$/.test(id)) {
+            return res.status(400).json({
+                success: false,
+                message: "Invalid Trip ID"
+            });
+        }
+
+        const [trips] = await db.query(
+            "SELECT * FROM trips WHERE id = ?",
+            [id]
+        );
+
+        if (trips.length === 0) {
+            return res.status(404).json({
+                success: false,
+                message: "Trip not found"
+            });
+        }
+
+        return res.status(200).json({
+            success: true,
+            trip: trips[0]
+        });
+
+    } catch (error) {
+        console.error("Get Trip By ID Error:", error);
+
+        return res.status(500).json({
+            success: false,
+            message: "Server error"
+        });
+    }
+};
 const getAllTrips = async (req, res) => {
     try {
         const [trips] = await db.query(
@@ -122,5 +160,6 @@ const getAllTrips = async (req, res) => {
 };module.exports = {
     createTrip,
     getMyTrips,
-    getAllTrips
+    getAllTrips,
+    getTripById
 };

@@ -8,6 +8,9 @@ const tripRoutes = require("./routes/tripRoutes");
 const membershipRoutes = require("./routes/membershipRoutes");
 
 
+const itineraryRoutes = require("./routes/itineraryRoutes");
+
+
 const app = express();
 
 app.use(cors());
@@ -15,6 +18,7 @@ app.use(express.json());
 app.use("/api/trips", tripRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/memberships", membershipRoutes);
+app.use("/api/itinerary", itineraryRoutes);
 // Home route
 app.get("/", (req, res) => {
     res.json({

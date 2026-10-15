@@ -6,9 +6,9 @@ import Sidebar from "../components/layout/Sidebar";
 import Header from "../components/layout/Header";
 
 import { getTripById } from "../services/tripService";
-import { joinTrip, leaveTrip , getTripMembership} from "../services/membershipService";
+import { joinTrip, leaveTrip } from "../services/membershipService";
 import defaultTripImage from "../assets/images/defualt-img.jpg";
-import "../assets/styles/dashboard.css";
+import {  getTripMembers } from "../services/tripService";
 
 function TripDetails() {
   const navigate = useNavigate();
@@ -20,7 +20,12 @@ const [membershipLoading, setMembershipLoading] = useState(false);
 
 
   const [trip, setTrip] = useState(null);
+  const [members, setMembers] = useState([]);
+const [membersLoading, setMembersLoading] = useState(true);
 const [loading, setLoading] = useState(true);
+
+
+
 useEffect(() => {
   const fetchTrip = async () => {
     try {
@@ -33,13 +38,11 @@ useEffect(() => {
       if (response.success) {
         setTrip(response.trip);
       } else {
-        alert(response.message || "Trip not found");
+        setTrip(null);
       }
     } catch (error) {
       console.error("Fetch Trip Error:", error);
-      alert(
-        error.response?.data?.message || "Failed to fetch trip details"
-      );
+      setTrip(null);
     } finally {
       setLoading(false);
     }
@@ -47,9 +50,36 @@ useEffect(() => {
 
   if (id) {
     fetchTrip();
+  } else {
+    setLoading(false);
+    setTrip(null);
   }
 }, [id]);
-  const [tripForm, setTripForm] = useState({
+
+useEffect(() => {
+  const fetchMembers = async () => {
+    try {
+      setMembersLoading(true);
+
+      const response = await getTripMembers(id);
+      console.log("Members:", response);
+
+      if (response.success) {
+        setMembers(response.members || []);
+      }
+    } catch (error) {
+      console.error(
+        "Members error:",
+        error.response?.data || error.message
+      );
+    } finally {
+      setMembersLoading(false);
+    }
+  };
+
+  if (id) fetchMembers();
+}, [id]);
+    const [tripForm, setTripForm] = useState({
     title: "",
     destination: "",
     start_date: "",
@@ -225,8 +255,28 @@ if (!trip) {
               </div>
             </div>
 
+<div className="trip-info-card">
+  <h2>Trip Members ({members.length})</h2>
+
+  {membersLoading ? (
+    <p>Loading members...</p>
+  ) : members.length === 0 ? (
+    <p>No members found.</p>
+  ) : (
+   <div className="members-list">
+  {members.map((member) => (
+    <div className="info-box" key={member.id}>
+      <ol>
+        <li>{member.user_name || member.name || "Name not found"}</li>
+      </ol>
+
+    </div>
+  ))}
+</div>
+  )}
+</div>
            <div className="action-card">
-  <h3>Trip Actions</h3>
+           <h3>Trip Actions</h3>
 
   <button
     className="create-trip-button"

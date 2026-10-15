@@ -34,20 +34,28 @@ export const getMyTrips = async () => {
 };
 
 
+
 export const getTripById = async (id) => {
     const token = localStorage.getItem("token");
 
-    const response = await axios.get(
-        `${API_URL}/${id}`,
-        {
-            headers: {
-                
-                Authorization: `Bearer ${token}`
+    try {
+        const response = await axios.get(
+            `${API_URL}/${id}`,
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
             }
-        }
-    );
+        );
 
-    return response.data;
+        return response.data;
+    } catch (error) {
+        console.error("Trip API URL:", `${API_URL}/${id}`);
+        console.error("HTTP Status:", error.response?.status);
+        console.error("Backend Response:", error.response?.data);
+
+        throw error;
+    }
 };
 export const getAllTrips = async () => {
     const token = localStorage.getItem("token");
@@ -55,6 +63,23 @@ export const getAllTrips = async () => {
     const response = await axios.get(
         "http://localhost:5000/api/trips/all",
         {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        }
+    );
+
+    return response.data;
+};
+
+
+export const getTripMembers = async (tripId) => {
+    const token = localStorage.getItem("token");
+
+    const response = await axios.get(
+        "http://localhost:5000/api/memberships/trip",
+        {
+            params: { trip_id: tripId },
             headers: {
                 Authorization: `Bearer ${token}`
             }

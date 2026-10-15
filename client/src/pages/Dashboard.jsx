@@ -20,21 +20,23 @@ const handleCreateTrip = async(e)=>{
     try{
          const data = await createTrip(tripForm);
             console.log("Create Trip Response:", data);
-            if(data.success){
-                alert("Trip Created Successfully")
-                setShowCreateTrip(false)
-                 setTripForm({
-                title: "",
-                destination: "",
-                start_date: "",
-                end_date: "",
-                budget: "",
-                description: "",
-                cover_image: "",
-                status: "planned"
+           if (data.success) {
+           alert("Trip Created Successfully");
+            setShowCreateTrip(false);
 
-            });
-            }
+    await loadTrips();
+
+    setTripForm({
+        title: "",
+        destination: "",
+        start_date: "",
+        end_date: "",
+        budget: "",
+        description: "",
+        cover_image: "",
+        status: "planned"
+    });
+}
     }
     catch (error) {
         console.error(
@@ -80,12 +82,11 @@ const loadTrips = async () => {
     try {
         const data = await getAllTrips();
 
-        console.log("Trips:", data);
+        console.log("All Trips Response:", data);
 
         if (data.success) {
-            setTrips(data.trips);
+            setTrips(data.trips || []);
         }
-
     } catch (error) {
         console.error(
             "Get Trips Error:",
@@ -359,16 +360,16 @@ const loadTrips = async () => {
                         trips.map((trip) => (
                        <div
                           className="travel-card"
-                      key={trip.id}
-                    onClick={()=>navigate(`trips/${trip.id}`)}
-                        style={{
-                    backgroundImage: `url(${
-                        trip.cover_image
+                          key={trip.id}
+                             onClick={()=>navigate(`trips/${trip.id}`)}
+                          style={{
+                          backgroundImage: `url(${
+                          trip.cover_image
                             ? trip.cover_image
                             : defaultTripImage
                     })`
                 }}
-            >
+                >
 
                 <div className="travel-card-overlay">
 
